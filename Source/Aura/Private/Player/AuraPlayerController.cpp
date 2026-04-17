@@ -11,6 +11,74 @@ AAuraPlayerController::AAuraPlayerController()
 	bReplicates = true;
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = CursorHit.GetActor();
+
+	//** Explanation of ifs
+	// Line trace from cursor, there are several scenarios:
+	// A. LastActor is null && ThisActor is null
+	//	- Do Nothing
+	// B. LastActor is null && ThisActor is valid
+	//  - Highlight ThisActor
+	// C. LastActor is valid && ThisActor is null
+	//  - UnHighlight LastActor
+	// D. Both Actor are valid but LastActor != ThisActor
+	//  - UnHighlight LastActor and HighLight ThisActor
+	// E. Both Actors are valid and are the same actor
+	//  - Do Nothing
+	// 
+	// */
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B
+			ThisActor->HighlightActor();
+		}
+		else
+		{
+			// Case A - Both are null, do nothing
+		}
+
+	}
+	else //last actor is valid
+	{
+		if (ThisActor == nullptr)
+		{
+			//Case C
+			LastActor->UnHighlightActor();
+		}
+		else
+		{
+			//Both Actors are valid
+			if (LastActor != ThisActor)
+			{
+				//Case D
+				LastActor->UnHighlightActor();
+				ThisActor->HighlightActor();
+			}
+			else
+			{
+				//Case E - do nothing
+			}
+		}
+	}
+}
+
 void AAuraPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -56,3 +124,5 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
+
