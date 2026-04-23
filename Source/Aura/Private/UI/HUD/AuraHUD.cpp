@@ -27,9 +27,12 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+	//attribute set is valid by now
 	
 
-	OverlayWidget->SetWidgetController(WidgetController);
+	OverlayWidget->SetWidgetController(WidgetController); //as long as this happened first we can broadcast
+	//now we can bind to widget ocntroller delegates
+	WidgetController->BroadcastInitialValues();
 
 	Widget->AddToViewport();
 }
