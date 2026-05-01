@@ -49,6 +49,18 @@ struct FEffectProperties
 
 };
 
+// typedef is specific to the FGameplayAttribute() signature, but TStaticFuncPtr is generic to any signature chosen 
+
+// we can also make an alias to hide the ugly way of using something
+// in here, FAttributeFuncPtr is now that other monolithic yucky bunch of code. this is still not flexible enough
+// typedef TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFuncPtr;
+
+
+//now, achieving an alias that is a template. the difference being the function type is now our template type
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
+// NOW we have an awesome static function pointer that stores the address of a function of any function signature we choose
+
 /**
  * 
  */
@@ -64,6 +76,20 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
+
+	//The second parameter of the map has been reduced and improved on itertatively. comments here track the evolution
+	// the template attribute pointer is for a function that returns an fgameplayattribute and takes zero inputs
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()> > TagsToAttributes;
+
+	/*
+	*    This function pointer can take zero input parameters and return a FGameplayAttribute
+	*  A function pointer enables us to bind a function to it that returns what we said above and takes those same inputs
+	* 
+	* 	TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FunctionPointer;
+	*/
+
+	
+
 	/*
 	* Primary Attributes
 	*/
