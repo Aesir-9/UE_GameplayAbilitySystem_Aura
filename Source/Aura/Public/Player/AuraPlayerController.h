@@ -44,6 +44,7 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 		TScriptInterface<IEnemyInterface> LastActor;
 		TScriptInterface<IEnemyInterface> ThisActor;
+		FHitResult CursorHit;
 
 		// InputComponent stuff
 		void AbilityInputTagPressed(FGameplayTag InputTag);
