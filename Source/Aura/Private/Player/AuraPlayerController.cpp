@@ -11,6 +11,8 @@
 #include <AuraGameplayTags.h>
 #include <NavigationSystem.h>
 #include "NavigationPath.h"
+#include "GameFramework/Character.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -24,6 +26,28 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 	AutoRun();
+}
+
+/// <summary>
+/// This is an RPC so it can be called in server.This will show floaties and be handled for client/server replication
+/// </summary>
+/// <param name="DamageAmount"></param>
+/// <param name="TargetCharacter"></param>
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+
+	//target char uses isvalid as it checks for pending kill. the char might have been called to be destroyed last frame
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		//we need to manually register as we are creating this dynamically.  (( we are not making use of create default subobj which handles this))
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		//attach first to spawn floaties in correct location, then deattach so it doesnt follow the char around. (just the design for it this time )
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+
+	}
 }
 
 void AAuraPlayerController::AutoRun()
