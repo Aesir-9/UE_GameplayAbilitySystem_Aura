@@ -33,7 +33,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 /// </summary>
 /// <param name="DamageAmount"></param>
 /// <param name="TargetCharacter"></param>
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
 {
 
 	//target char uses isvalid as it checks for pending kill. the char might have been called to be destroyed last frame
@@ -45,7 +45,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		//attach first to spawn floaties in correct location, then deattach so it doesnt follow the char around. (just the design for it this time )
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 
 	}
 }
