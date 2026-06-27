@@ -37,7 +37,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 {
 
 	//target char uses isvalid as it checks for pending kill. the char might have been called to be destroyed last frame
-	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		//we need to manually register as we are creating this dynamically.  (( we are not making use of create default subobj which handles this))
