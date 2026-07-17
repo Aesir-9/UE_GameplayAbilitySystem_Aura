@@ -9,6 +9,7 @@
 #include <Player/AuraPlayerState.h>
 #include "UI/WidgetController/AuraWidgetController.h"
 #include <AuraAbilityTypes.h>
+#include "Engine/OverlapResult.h"
 #include <Interaction/CombatInterface.h>
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
@@ -134,5 +135,32 @@ void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& Ef
 	{
 		AuraEffectContext->SetIsBlockedHit(bInIsBlockedHit);
 	}
+
+}
+
+void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
+	const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+{
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	// query scene to see what we hit
+	TArray<FOverlapResult> Overlaps;
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
+		//now we can loop to decide what to do 
+
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
+			{
+				OutOverlappingActors.AddUnique(ICombatInterface::Execute_GetAvatar(Overlap.GetActor()));
+				// why not just use:
+				//OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}
+		}
+	}
+
 
 }
