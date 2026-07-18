@@ -23,7 +23,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (!bIsServer) return;
 
 		//it's a static function so pass what is implementing the interface
-		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
+		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
+			GetAvatarActorFromActorInfo(),
+			FAuraGameplayTags::Get().Montage_Attack_Weapon);
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 		//Rotation.Pitch = 0.f;
 
