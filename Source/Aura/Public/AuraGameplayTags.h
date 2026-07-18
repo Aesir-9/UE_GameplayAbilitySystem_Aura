@@ -56,6 +56,12 @@ public:
 
 	FGameplayTag Abilities_Attack;
 
+
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_RightHand;  //I believe this is too specific and not the right way to go about animations that might use/weave limbs but following for now
+	FGameplayTag Montage_Attack_LeftHand;
+
+
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	FGameplayTag Effects_HitReact;
