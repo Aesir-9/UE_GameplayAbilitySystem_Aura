@@ -60,6 +60,7 @@ public:
 	FGameplayTag CombatSocket_Weapon;
 	FGameplayTag CombatSocket_RightHand;  //I believe this is too specific and not the right way to go about animations that might use/weave limbs but following for now
 	FGameplayTag CombatSocket_LeftHand;
+	FGameplayTag CombatSocket_Tail;
 
 
 	FGameplayTag Montage_Attack_1;
